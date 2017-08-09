@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 import datetime
 from selenium import webdriver
+import sys
 
 import urllib
 
@@ -20,7 +21,28 @@ def main():
 
     soup = BeautifulSoup(driver.page_source, "html.parser")
     results = soup.find("div", {"id": "rate-calendar-months-wrapper"})
-    print(results)
+    days = results.findAll("td", {"class": "date-wrapper"})
+    my_data = []
+
+    for day in days:
+        data_date = day.attrs["data-date"]
+        data_month = day.attrs["data-month"]
+        data_year = day.attrs["data-year"]
+        if not data_date:
+            continue
+        rate = day.find("span", {"class": "date-rate"})
+        if not rate:
+            continue
+        rate = int(rate.text.split("$")[1])
+        date = data_month + "/" + data_date + "/" + data_year
+        my_data.append({"date": date, "price": rate})
+    my_data.sort(key=lambda x: x["price"])
+    for data in my_data:
+        print(data["date"] + ": $" + str(data["price"]))
+
+
+
+    print(len(days))
 
 
 if __name__ == "__main__":
