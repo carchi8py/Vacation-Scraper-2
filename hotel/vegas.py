@@ -1,8 +1,5 @@
 from bs4 import BeautifulSoup
-import datetime
 from selenium import webdriver
-
-PHANTOMJS_PATH = "/Users/carchi/bin/phantomjs-2.1.1-macosx"
 
 def main():
     driver = webdriver.Chrome()
