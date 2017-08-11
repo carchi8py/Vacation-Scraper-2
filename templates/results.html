@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+    <table border=1>
+        <tr>
+            <th><b>Start Date</b></th>
+            <th><b>End Date</b></th>
+            <th><b>Price</b></th>
+            <th><b>Hotel</b></th>
+        </tr>
+        {% for row in data %}
+        <tr>
+            <td>{{row.start}}</td>
+            <td>{{row.end}}</td>
+            <td>{{row.price}}</td>
+            <td>{{row.hotel}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

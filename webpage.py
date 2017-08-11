@@ -35,8 +35,26 @@ def show_cheepest_for_days(month, days):
             low_date += 1
             high_date += 1
     data.sort(key=lambda x: x["price"])
-    for each in data:
-        print(each["start"] + " to " + each["end"]+ ": $" + str(each["price"]) + " at " + each["hotel"])
+    return render_template('results.html', data=data)
+
+@app.route('/all/<days>')
+def show_all_data(days):
+    hotels = session.query(Hotel).order_by(Hotel.name)
+    data = []
+    for hotel in hotels:
+        low_date = 0
+        high_date = int(days)
+        #this get us all the price for a specific month
+        month_prices = session.query(Price).filter_by(hotel = hotel).order_by(Price.date)
+        while month_prices.count() > high_date:
+            cost = 0
+            for price in range(low_date, high_date):
+                cost += month_prices[price].price
+            data.append({"start": str(month_prices[low_date].date), "end": str(month_prices[high_date].date), "price": int(cost), "hotel": month_prices[high_date].hotel.name})
+            low_date += 1
+            high_date += 1
+    data.sort(key=lambda x: x["price"])
+    return render_template('results.html', data=data)
 
 
 if __name__ == '__main__':
