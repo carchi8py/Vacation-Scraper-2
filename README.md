@@ -3,8 +3,8 @@
 
 This web scraper finds the cheapest hotel prices in Vegas
 
-### Prerequisites
-####Python 3
+## Prerequisites
+###Python 3
 
 ```
 pip3 install bs4
@@ -13,11 +13,11 @@ pip3 install sqlalchemy
 pip3 install selenium
 ```
 
-####Chrome Drivers
+###Chrome Drivers
 You'll need Chrome Drivers installed somewhere or Selenium will fail.
 just follow this stack overflow page https://stackoverflow.com/questions/13724778/how-to-run-selenium-webdriver-test-cases-in-chrome
 
-###Getting started
+##Getting started
 First run the database script to create a sqlite db to store the data in
 ```
 python3 database_setup.py
