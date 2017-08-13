@@ -1,2 +1,4 @@
 .idea/
 .scannerwork/
+__pycache__/
+db.db
