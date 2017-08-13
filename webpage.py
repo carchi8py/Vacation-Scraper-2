@@ -15,13 +15,24 @@ session = DBSession()
 
 @app.route('/')
 def index():
+    """
+    Currently just list all the hotels that we have data base
+    :return:
+    """
     hotels = session.query(Hotel).order_by(Hotel.name)
     return render_template('index.html', hotels=hotels)
 
-@app.route('/cheepest/<month>/<days>')
-def show_cheepest_for_days(month, days):
+@app.route('/cheapest/<month>/<days>')
+def show_cheapest_for_days(month, days):
+    """
+    Show the cheapest prices for a single month for a certain number of days
+    :param month: The month you want to stay in Vegas
+    :param days: The number of days you want to stay
+    :return: A Webpage ordered by the cheapest rate
+    """
     hotels = session.query(Hotel).order_by(Hotel.name)
     data = []
+    #probably a way better way to do this, but just put something together quickly.
     for hotel in hotels:
         low_date = 0
         high_date = int(days)
@@ -37,8 +48,14 @@ def show_cheepest_for_days(month, days):
     data.sort(key=lambda x: x["price"])
     return render_template('results.html', data=data)
 
+#this is just a copy of the above function with out months
 @app.route('/all/<days>')
 def show_all_data(days):
+    """
+    Show the cheapest price for all data in the database
+    :param days: the number of days you want to stay in vegas
+    :return: A webpage order by the cheapest rate
+    """
     hotels = session.query(Hotel).order_by(Hotel.name)
     data = []
     for hotel in hotels:
