@@ -31,3 +31,13 @@ Last run the webpage scrip
 ```
 python3 webpage.py
 ```
+
+### Web site pages
+Cheapest for a month -- In the example below 11 = the month (November), and the 4 is the number of day you want to stay.
+```
+localhost:5000/cheapest/11/4
+```\
+Cheapest for all months -- In the example below 4 = the number of days, this will look though every data in the database
+```
+localhost:5000/all/4
+```
