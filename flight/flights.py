@@ -23,17 +23,24 @@ VEGAS = "LAS"
 def main():
     #Let create 1 year worth of flight from today
     now = datetime.datetime.now()
+    my_data = []
     for airport in AIRPORTS:
         print("Flight for " + airport)
         url = generate_url(now, airport)
         r = requests.get(url)
         parsed_json = json.loads(r.text)
         flights = parsed_json["data"]
-        parse_flights(flights)
+        my_data = parse_flights(flights, my_data)
 
-def parse_flights(flights):
+def parse_flights(flights, my_data):
     for flight in flights:
-        print(datetime.datetime.fromtimestamp(flight["dTimeUTC"]).strftime('%c') +": $" + str(flight["price"]) + " on " + str(flight["airlines"]))
+        my_data.append({"departure": datetime.datetime.fromtimestamp(flight["dTimeUTC"]),
+                        "arrival": datetime.datetime.fromtimestamp(flight["dTimeUTC"]),
+                        "price": flight["price"],
+                        "link": flight["deep_link"],
+                        "airline": flight["airlines"]
+                        })
+    return my_data
 
 def generate_url(date_obj, airport):
     url = URL1 + airport + URL2 + VEGAS + URL3
