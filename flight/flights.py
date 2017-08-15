@@ -17,21 +17,23 @@ URL3 = "&dateFrom="
 URL4 = "&dateTo="
 URL5 = "&partner=picky&one_per_date=1&curr=USD"
 
-AIRPORTS = ["SFO", "JFK"]
+AIRPORTS = ["SFO", "JFK", "YXE"]
 VEGAS = "LAS"
 
 def main():
     #Let create 1 year worth of flight from today
     now = datetime.datetime.now()
     for airport in AIRPORTS:
+        print("Flight for " + airport)
         url = generate_url(now, airport)
         r = requests.get(url)
         parsed_json = json.loads(r.text)
         flights = parsed_json["data"]
-        for flight in flights:
-            print(flight["price"])
-        sys.exit(1)
+        parse_flights(flights)
 
+def parse_flights(flights):
+    for flight in flights:
+        print(datetime.datetime.fromtimestamp(flight["dTimeUTC"]).strftime('%c') +": $" + str(flight["price"]) + " on " + str(flight["airlines"]))
 
 def generate_url(date_obj, airport):
     url = URL1 + airport + URL2 + VEGAS + URL3
