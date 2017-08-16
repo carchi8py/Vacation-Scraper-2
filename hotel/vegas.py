@@ -57,6 +57,8 @@ def add_hotel_to_db(hotel):
     :param hotel: The hotel we want to add
     :return: nothing
     """
+    if session.query(Hotel).filter_by(name=hotel).count():
+        return
     new_hotel = Hotel(name = hotel)
     session.add(new_hotel)
     session.commit()
