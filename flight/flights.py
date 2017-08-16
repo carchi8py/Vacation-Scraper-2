@@ -64,7 +64,7 @@ def parse_flights(flights, my_data):
                          datetime.datetime.fromtimestamp(flight["aTimeUTC"]),
                          flight["price"],
                          flight["deep_link"],
-                         flight["airlines"])
+                         str(flight["airlines"]))
     return my_data
 
 def add_flight_to_db(start, end, departure, arrival, price, link, airline):
