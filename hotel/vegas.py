@@ -35,10 +35,12 @@ hotels = ["mandalaybay",
 def main():
     my_data = []
     for hotel in hotels:
-        add_hotel_to_db(hotel)
-        request = get_website(hotel)
-        print(hotel)
-        days = parse_data(request)
+        days = False
+        while not days:
+            print("Working on " + hotel)
+            add_hotel_to_db(hotel)
+            request = get_website(hotel)
+            days = parse_data(request)
         my_data = get_prices(days, my_data, hotel)
     my_data.sort(key=lambda x: x["price"])
     for price in my_data:
@@ -76,7 +78,11 @@ def parse_data(request):
     """
     soup = BeautifulSoup(request.page_source, "html.parser")
     results = soup.find("div", {"id": "rate-calendar-months-wrapper"})
-    days = results.findAll("td", {"class": "date-wrapper"})
+    #sometime the page will not load for what ever reason, if this happens we want to try again
+    try:
+        days = results.findAll("td", {"class": "date-wrapper"})
+    except:
+        return False
     return days
 
 def get_prices(days, my_data, hotel):
