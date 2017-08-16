@@ -1,6 +1,6 @@
 import sys
 
-from sqlalchemy import Column, ForeignKey, Integer, String, Date
+from sqlalchemy import Column, ForeignKey, Integer, String, Date, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
@@ -25,6 +25,15 @@ class Price(Base):
     hotel = relationship(Hotel)
     date = Column(Date, nullable=False)
     price = Column(Integer)
+
+class Flight(Base):
+    __tablename__ = 'flight'
+    id = Column(Integer, primary_key=True)
+    departure_time = Column(DateTime)
+    arrival_time = Column(DateTime)
+    price = Column(Integer)
+    link = Column(String)
+    airline = Column(String)
 
 engine = create_engine('sqlite:///db.db')
 Base.metadata.create_all(engine)
