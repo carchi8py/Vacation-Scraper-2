@@ -36,11 +36,16 @@ def main():
     my_data = []
     for hotel in hotels:
         days = False
+        trys = 0
         while not days:
             print("Working on " + hotel)
             add_hotel_to_db(hotel)
             request = get_website(hotel)
             days = parse_data(request)
+            trys += 1
+            #if we tried to get data 3 time and are unable to skip hotel
+            if trys >= 3:
+                days = True
         my_data = get_prices(days, my_data, hotel)
     my_data.sort(key=lambda x: x["price"])
     for price in my_data:
@@ -120,7 +125,7 @@ def get_website(hotel):
     #wait for the page to load and capture the html once the load is complete
     driver = webdriver.Chrome()
     driver.get(url)
-    time.sleep(2)
+    time.sleep(1)
     return driver
 
 def format_url(hotel):
