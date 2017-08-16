@@ -46,6 +46,8 @@ def main():
             #if we tried to get data 3 time and are unable to skip hotel
             if trys >= 3:
                 days = True
+        if days:
+            continue
         my_data = get_prices(days, my_data, hotel)
     my_data.sort(key=lambda x: x["price"])
     for price in my_data:
