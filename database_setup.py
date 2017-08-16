@@ -29,6 +29,8 @@ class Price(Base):
 class Flight(Base):
     __tablename__ = 'flight'
     id = Column(Integer, primary_key=True)
+    start_ariport = Column(String)
+    end_airport = Column(String)
     departure_time = Column(DateTime)
     arrival_time = Column(DateTime)
     price = Column(Integer)

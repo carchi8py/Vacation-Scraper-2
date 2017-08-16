@@ -9,6 +9,22 @@ import calendar
 import requests
 import json
 import sys
+import os
+import inspect
+
+#import the database
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir)
+from database_setup import Base, Flight
+
+engine = create_engine('sqlite:///db.db')
+Base.metadata.bind = engine
+
+DBSession = sessionmaker(bind=engine)
+session = DBSession()
 
 
 URL1 = "https://api.skypicker.com/flights?flyFrom="
@@ -34,13 +50,34 @@ def main():
 
 def parse_flights(flights, my_data):
     for flight in flights:
-        my_data.append({"departure": datetime.datetime.fromtimestamp(flight["dTimeUTC"]),
-                        "arrival": datetime.datetime.fromtimestamp(flight["dTimeUTC"]),
+        my_data.append({"start_airport": flight["flyFrom"],
+                        "end_airport": flight["cityTo"],
+                        "departure": datetime.datetime.fromtimestamp(flight["dTimeUTC"]),
+                        "arrival": datetime.datetime.fromtimestamp(flight["aTimeUTC"]),
                         "price": flight["price"],
                         "link": flight["deep_link"],
                         "airline": flight["airlines"]
                         })
+        add_flight_to_db(flight["flyFrom"],
+                         flight["cityTo"],
+                         datetime.datetime.fromtimestamp(flight["dTimeUTC"]),
+                         datetime.datetime.fromtimestamp(flight["aTimeUTC"]),
+                         flight["price"],
+                         flight["deep_link"],
+                         flight["airlines"])
     return my_data
+
+def add_flight_to_db(start, end, departure, arrival, price, link, airline):
+    new_flight = Flight(start_ariport = start,
+                        end_airport = end,
+                        departure_time = departure,
+                        arrival_time = arrival,
+                        price = price,
+                        link = link,
+                        airline = airline)
+    session.add(new_flight)
+    session.commit()
+
 
 def generate_url(date_obj, airport):
     url = URL1 + airport + URL2 + VEGAS + URL3
@@ -48,8 +85,6 @@ def generate_url(date_obj, airport):
     last_day_of_month = str(calendar.monthrange(date_obj.year, date_obj.month)[1])
     url = url + last_day_of_month + date_obj.strftime("/%m/%Y") + URL5
     return url
-
-
 
 if __name__ == "__main__":
     main()
