@@ -11,6 +11,10 @@
             <th><strong>End Date</strong></th>
             <th><strong>Price</strong></th>
             <th><strong>Hotel</strong></th>
+            <th><strong>Departure</strong></th>
+            <th><strong>Departure time </strong></th>
+            <th><strong>Arrival Time</strong></th>
+            <th><strong>Airline</strong></th>
         </tr>
         {% for row in data %}
         <tr>
@@ -18,6 +22,10 @@
             <td>{{row.end}}</td>
             <td>{{row.price}}</td>
             <td>{{row.hotel}}</td>
+            <td>{{row.start_airport}}</td>
+            <td>{{row.arival_time}}</td>
+            <td>{{row.depature_time}}</td>
+            <td>{{row.airline}}</td>
         </tr>
         {% endfor %}
     </table>

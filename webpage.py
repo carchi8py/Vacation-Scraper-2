@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 import sqlalchemy
+from sqlalchemy.sql.expression import func
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from database_setup import Base, Hotel, Price
+from database_setup import Base, Hotel, Price, Flight
 import sys
 
 app = Flask(__name__)
@@ -22,14 +23,8 @@ def index():
     hotels = session.query(Hotel).order_by(Hotel.name)
     return render_template('index.html', hotels=hotels)
 
-@app.route('/cheapest/<month>/<days>')
-def show_cheapest_for_days(month, days):
-    """
-    Show the cheapest prices for a single month for a certain number of days
-    :param month: The month you want to stay in Vegas
-    :param days: The number of days you want to stay
-    :return: A Webpage ordered by the cheapest rate
-    """
+@app.route('/<airport>/<month>/<days>')
+def show_cheapest_for_days(airport, month, days):
     hotels = session.query(Hotel).order_by(Hotel.name)
     data = []
     #probably a way better way to do this, but just put something together quickly.
@@ -42,10 +37,33 @@ def show_cheapest_for_days(month, days):
             cost = 0
             for price in range(low_date, high_date):
                 cost += month_prices[price].price
-            data.append({"start": str(month_prices[low_date].date), "end": str(month_prices[high_date].date), "price": int(cost), "hotel": month_prices[high_date].hotel.name})
+            flights = session.query(Flight).filter_by(start_ariport=airport).filter(func.date(Flight.departure_time) == month_prices[low_date].date)
+            if flights.count() > 0:
+                s_port = flights[0].start_ariport
+                a_time = flights[0].departure_time
+                arival_time = a_time.strftime("%H:%M:%S")
+                d_time = flights[0].arrival_time
+                depature_time = d_time.strftime("%H:%M:%S")
+                a_price = int(flights[0].price)
+                airline = flights[0].airline
+            else:
+                s_port = "NA"
+                a_price = 2000
+                arival_time = "NA"
+                depature_time = "NA"
+                airline = "NA"
+            data.append({"start": str(month_prices[low_date].date),
+                         "end": str(month_prices[high_date].date),
+                         "price": int(cost) + a_price,
+                         "hotel": month_prices[high_date].hotel.name,
+                         "start_airport": s_port,
+                         "arival_time": arival_time,
+                         "depature_time": depature_time,
+                         "airline": airline})
             low_date += 1
             high_date += 1
     data.sort(key=lambda x: x["price"])
+    print(data)
     return render_template('results.html', data=data)
 
 #this is just a copy of the above function with out months
