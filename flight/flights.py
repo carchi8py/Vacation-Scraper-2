@@ -44,24 +44,24 @@ def main():
     for airport in AIRPORTS:
         print("Flight from " + airport + " to " + VEGAS)
         to_url = generate_url(now, airport, VEGAS)
-        print(to_url)
-        #r = requests.get(to_url)
-        #parsed_json = json.loads(r.text)
-        #flights = parsed_json["data"]
-        #my_data = parse_flights(flights, my_data)
+        r = requests.get(to_url)
+        parsed_json = json.loads(r.text)
+        flights = parsed_json["data"]
+        my_data = parse_flights(flights, my_data, airport, VEGAS)
 
         print("Flight from  " + VEGAS + " to " + airport)
         to_url = generate_url(now, VEGAS, airport)
-        print(to_url)
-        #r = requests.get(to_url)
-        #parsed_json = json.loads(r.text)
-        #flights = parsed_json["data"]
-        #my_data = parse_flights(flights, my_data)
+        r = requests.get(to_url)
+        parsed_json = json.loads(r.text)
+        flights = parsed_json["data"]
+        my_data = parse_flights(flights, my_data, VEGAS, airport)
 
-def parse_flights(flights, my_data):
+def parse_flights(flights, my_data, start, end):
     for flight in flights:
         my_data.append({"start_airport": flight["flyFrom"],
+                        "start_searched_airport": start,
                         "end_airport": flight["cityTo"],
+                        "end_searched_airport": end,
                         "departure": datetime.datetime.fromtimestamp(flight["dTimeUTC"]),
                         "arrival": datetime.datetime.fromtimestamp(flight["aTimeUTC"]),
                         "price": flight["price"],
@@ -69,7 +69,9 @@ def parse_flights(flights, my_data):
                         "airline": flight["airlines"]
                         })
         add_flight_to_db(flight["flyFrom"],
+                         start,
                          flight["cityTo"],
+                         end,
                          datetime.datetime.fromtimestamp(flight["dTimeUTC"]),
                          datetime.datetime.fromtimestamp(flight["aTimeUTC"]),
                          flight["price"],
@@ -77,9 +79,11 @@ def parse_flights(flights, my_data):
                          str(flight["airlines"]))
     return my_data
 
-def add_flight_to_db(start, end, departure, arrival, price, link, airline):
+def add_flight_to_db(start, start_search, end, end_search, departure, arrival, price, link, airline):
     new_flight = Flight(start_ariport = start,
+                        start_searched_airport = start_search,
                         end_airport = end,
+                        end_searched_airport = end_search,
                         departure_time = departure,
                         arrival_time = arrival,
                         price = price,
