@@ -39,10 +39,8 @@ def show_cheapest_for_days(airport, month, days):
             cost = 0
             for price in range(low_date, high_date):
                 cost += month_prices[price].price
-            to_flights = session.query(Flight).filter_by(start_ariport=airport).filter(func.date(Flight.departure_time) == month_prices[low_date].date)
-            print(to_flights.count())
-            from_flight = session.query(Flight).filter_by(end_airport=airport).filter(func.date(Flight.departure_time) == month_prices[low_date].date)
-            print(from_flight.count())
+            to_flights = session.query(Flight).filter_by(start_searched_airport=airport).filter(func.date(Flight.departure_time) == month_prices[low_date].date)
+            from_flight = session.query(Flight).filter_by(end_searched_airport=airport).filter(func.date(Flight.departure_time) == month_prices[low_date].date)
             flight_data = _return_flight_data(to_flights, from_flight)
             data.append({"start": str(month_prices[low_date].date),
                          "end": str(month_prices[high_date].date),
@@ -70,7 +68,7 @@ def _return_flight_data(to_flight, from_flights):
 
 def _format_flight_data(flights):
     if flights.count() > 0:
-        s_port = flights[0].start_ariport
+        s_port = flights[0].start_ariport + " -> " + flights[0].end_airport
         a_time = flights[0].departure_time
         arival_time = a_time.strftime("%H:%M:%S")
         d_time = flights[0].arrival_time
