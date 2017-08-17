@@ -44,17 +44,19 @@ def main():
     for airport in AIRPORTS:
         print("Flight from " + airport + " to " + VEGAS)
         to_url = generate_url(now, airport, VEGAS)
-        r = requests.get(to_url)
-        parsed_json = json.loads(r.text)
-        flights = parsed_json["data"]
-        my_data = parse_flights(flights, my_data)
+        print(to_url)
+        #r = requests.get(to_url)
+        #parsed_json = json.loads(r.text)
+        #flights = parsed_json["data"]
+        #my_data = parse_flights(flights, my_data)
 
         print("Flight from  " + VEGAS + " to " + airport)
         to_url = generate_url(now, VEGAS, airport)
-        r = requests.get(to_url)
-        parsed_json = json.loads(r.text)
-        flights = parsed_json["data"]
-        my_data = parse_flights(flights, my_data)
+        print(to_url)
+        #r = requests.get(to_url)
+        #parsed_json = json.loads(r.text)
+        #flights = parsed_json["data"]
+        #my_data = parse_flights(flights, my_data)
 
 def parse_flights(flights, my_data):
     for flight in flights:
@@ -93,6 +95,7 @@ def generate_url(date_obj, from_airport, to_airport):
     date_obj = date_obj + timedelta(days=365)
     last_day_of_month = str(calendar.monthrange(date_obj.year, date_obj.month)[1])
     url = url + last_day_of_month + date_obj.strftime("/%m/%Y") + URL5
+    print(url)
     return url
 
 if __name__ == "__main__":

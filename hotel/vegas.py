@@ -35,19 +35,13 @@ hotels = ["mandalaybay",
 def main():
     my_data = []
     for hotel in hotels:
-        days = False
-        trys = 0
-        while not days:
-            print("Working on " + hotel)
-            add_hotel_to_db(hotel)
-            request = get_website(hotel)
-            days = parse_data(request)
-            trys += 1
-            #if we tried to get data 3 time and are unable to skip hotel
-            if trys >= 3:
-                days = True
-        if days:
+        add_hotel_to_db(hotel)
+        request = get_website(hotel)
+        print(hotel)
+        days, good = parse_data(request)
+        if not good:
             continue
+            print("Something bad happened skipping hotel")
         my_data = get_prices(days, my_data, hotel)
     my_data.sort(key=lambda x: x["price"])
     for price in my_data:
@@ -91,8 +85,8 @@ def parse_data(request):
     try:
         days = results.findAll("td", {"class": "date-wrapper"})
     except:
-        return False
-    return days
+        return days, False
+    return days, True
 
 def get_prices(days, my_data, hotel):
     """
