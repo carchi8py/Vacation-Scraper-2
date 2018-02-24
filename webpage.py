@@ -23,6 +23,22 @@ def index():
     hotels = session.query(Hotel).order_by(Hotel.name)
     return render_template('index.html', hotels=hotels)
 
+@app.route('/hotel/<year>/<month>/<day>/<days>')
+def show_hotels_for_date(year, month, day, days):
+    hotels = session.query(Hotel).order_by(Hotel.name)
+    
+    low_date = 0
+    high_date = int(days)
+    data = []
+    for hotel in hotels:
+        month_prices = session.query(Price).filter_by(hotel=hotel).filter(
+            (sqlalchemy.extract('month', Price.date) == month)).order_by(Price.date)
+        while month_prices.count() > high_date:
+            cost = 0
+            for price in range(low_date, high_date):
+                continue
+    return render_template('results.html', data=data)
+
 @app.route('/<airport>/<month>/<days>')
 def show_cheapest_for_days(airport, month, days):
     hotels = session.query(Hotel).order_by(Hotel.name)

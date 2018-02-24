@@ -34,7 +34,7 @@ URL3 = "&dateFrom="
 URL4 = "&dateTo="
 URL5 = "&partner=picky&one_per_date=1&curr=USD"
 
-AIRPORTS = ["SFO", "JFK", "YXE"]
+AIRPORTS = ["SFO", "SJC"]
 VEGAS = "LAS"
 
 def main():
