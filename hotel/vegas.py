@@ -80,12 +80,12 @@ def parse_data(request):
     :return: a list of all days and there prices.
     """
     soup = BeautifulSoup(request.page_source, "html.parser")
-    results = soup.find("div", {"id": "rate-calendar-months-wrapper"})
+    results = soup.find("div", {"class": "calendar__monthsWrapper"})
     #sometime the page will not load for what ever reason, if this happens we want to try again
     try:
-        days = results.findAll("td", {"class": "date-wrapper"})
+        days = results.findAll("a", {"class": "dateWrapper"})
     except:
-        return days, False
+        return None, False
     return days, True
 
 def get_prices(days, my_data, hotel):
@@ -97,16 +97,21 @@ def get_prices(days, my_data, hotel):
     :return: our data with the price for each day
     """
     for day in days:
+        if day.attrs['data-status'] == 'past-date':
+            continue
         data_date = day.attrs["data-date"]
-        data_month = str(int(day.attrs["data-month"]) + 1)
-        data_year = day.attrs["data-year"]
+        data_month = str(data_date.split('/')[0])
+        data_year = str(data_date.split('/')[2])
         if not data_date:
             continue
-        rate = day.find("span", {"class": "date-rate"})
+        rate = day.find("span", {"class": "dateWrapper__button--rate"})
         if not rate:
             continue
-        rate = int(rate.text.split("$")[1])
-        date = data_month + "/" + data_date + "/" + data_year
+        try:
+            rate = int(rate.text.split("$")[1])
+        except:
+            rate = 9999
+        date = data_date
         my_data.append({"date": date, "price": rate, "hotel": hotel})
         add_price_to_db(date, rate, hotel)
     return my_data
